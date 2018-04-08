@@ -20,12 +20,6 @@ def loadWords():
 def isWordGuessed(secretWord, lettersGuessed):
     secretLetters = []
 
-#    for letter in secretWord:
-#        if letter in secretLetters:
-#            secretLetters.append(letter)
-#        else:
-#            pass
-
     for letter in secretWord:
         if letter in lettersGuessed:
             pass
@@ -46,7 +40,7 @@ def getAvailableLetters():
 
 def initialMessage(secretWord):
 
-    print 'Welcome to the game, Hangam!'
+    print 'Welcome to the game, Hangman!'
     print 'I am thinking of a word that is', len(secretWord), ' letters long.'
     print '-------------'
 
@@ -64,11 +58,16 @@ def result(secretWord, lettersGuessed):
     else:
         print 'Sorry, you ran out of attempts. The word was', secretWord, '.'
 
-def hangman(secretWord):
+def checkGuessedLetter(letter, secretWord, guessed, lettersGuessed):
 
-    attempts = 8
-    lettersGuessed = []
-    initialMessage(secretWord)
+    for letter in secretWord:
+        if letter in lettersGuessed:
+            guessed += letter
+        else:
+            guessed += '_ '
+
+def gameEngine(attempts,lettersGuessed, secretWord):
+
     while isWordGuessed(secretWord, lettersGuessed) == False and attempts > 0:
         print 'You have ', attempts, 'attempts left.'
 
@@ -79,22 +78,14 @@ def hangman(secretWord):
         if letter in lettersGuessed:
 
             guessed = getGuessedWord()
-            for letter in secretWord:
-                if letter in lettersGuessed:
-                    guessed += letter
-                else:
-                    guessed += '_ '
-
+            checkGuessedLetter(letter, secretWord, guessed, lettersGuessed)
             print 'Oops! You have already guessed that letter: ', guessed
+
         elif letter in secretWord:
             lettersGuessed.append(letter)
 
             guessed = getGuessedWord()
-            for letter in secretWord:
-                if letter in lettersGuessed:
-                    guessed += letter
-                else:
-                    guessed += '_ '
+            checkGuessedLetter(letter, secretWord, guessed, lettersGuessed)
 
             print 'Good guess: ', guessed
         else:
@@ -102,11 +93,7 @@ def hangman(secretWord):
             lettersGuessed.append(letter)
 
             guessed = getGuessedWord()
-            for letter in secretWord:
-                if letter in lettersGuessed:
-                    guessed += letter
-                else:
-                    guessed += '_ '
+            checkGuessedLetter(letter, secretWord, guessed, lettersGuessed)
 
             print 'Oops! That letter is not in my word: ',  guessed
         print '------------'
@@ -114,6 +101,13 @@ def hangman(secretWord):
     else:
         result(secretWord, lettersGuessed)
 
+
+def hangman(secretWord):
+
+    attempts = 8
+    lettersGuessed = []
+    initialMessage(secretWord)
+    gameEngine(attempts,lettersGuessed, secretWord)
 
 secretWord = loadWords()
 hangman(secretWord)
