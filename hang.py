@@ -57,17 +57,24 @@ def availableLetters(available, lettersGuessed):
 
     print 'Available letters', available
 
+def result(secretWord, lettersGuessed):
+
+    if isWordGuessed(secretWord, lettersGuessed) == True:
+        print 'Congratulations, you won!'
+    else:
+        print 'Sorry, you ran out of attempts. The word was', secretWord, '.'
+
 def hangman(secretWord):
 
-    guesses = 8
+    attempts = 8
     lettersGuessed = []
     initialMessage(secretWord)
-    while isWordGuessed(secretWord, lettersGuessed) == False and guesses > 0:
-        print 'You have ', guesses, 'guesses left.'
+    while isWordGuessed(secretWord, lettersGuessed) == False and attempts > 0:
+        print 'You have ', attempts, 'attempts left.'
 
         available = getAvailableLetters()
         availableLetters(available, lettersGuessed)
-        
+
         letter = raw_input('Please guess a letter: ')
         if letter in lettersGuessed:
 
@@ -89,9 +96,9 @@ def hangman(secretWord):
                 else:
                     guessed += '_ '
 
-            print 'Good Guess: ', guessed
+            print 'Good guess: ', guessed
         else:
-            guesses -=1
+            attempts -=1
             lettersGuessed.append(letter)
 
             guessed = getGuessedWord()
@@ -105,13 +112,8 @@ def hangman(secretWord):
         print '------------'
 
     else:
-        if isWordGuessed(secretWord, lettersGuessed) == True:
-            print 'Congratulations, you won!'
-        else:
-            print 'Sorry, you ran out of guesses. The word was', secretWord, '.'
+        result(secretWord, lettersGuessed)
 
 
-
-
-secretWord = loadWords().lower()
+secretWord = loadWords()
 hangman(secretWord)
