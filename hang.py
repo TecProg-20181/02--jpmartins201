@@ -11,11 +11,25 @@ class Hangman:
         self.secretWord = ''
         self.loadWords()
 
+
+    def checkDifferentLetters(self):
+        letters = set()
+        letters.update(self.secretWord)
+        print 'The secret word has ', len(letters), 'equal letters!'
+
+        return len(letters)
+
+    def newWord(self, wordlist):
+        while self.checkDifferentLetters() > self.attempts:
+            self.secretWord = random.choice(wordlist)
+            print 'A new word has been selected due to many different letters in the word! '
+
     def loadWords(self):
         """
         Depending on the size of the word list, this function may
         take a while to finish.
         """
+
         print "Loading word list from file..."
 
         inFile = open(WORDLIST_FILENAME, 'r', 0)# inFile: file
@@ -24,6 +38,7 @@ class Hangman:
 
         print " ", len(wordlist), "words loaded."
         self.secretWord = random.choice(wordlist)
+        self.newWord(wordlist)
 
     def isWordGuessed(self):
         self.secretLetters = []
