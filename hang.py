@@ -58,13 +58,15 @@ def result(secretWord, lettersGuessed):
     else:
         print 'Sorry, you ran out of attempts. The word was', secretWord, '.'
 
-def checkGuessedLetter(letter, secretWord, guessed, lettersGuessed):
+def checkGuessedLetter(letter, secretWord, lettersGuessed):
 
+    guessed = getGuessedWord()
     for letter in secretWord:
         if letter in lettersGuessed:
             guessed += letter
         else:
-            guessed += '_ '
+            guessed += '_'
+    return guessed
 
 def gameEngine(attempts,lettersGuessed, secretWord):
 
@@ -77,23 +79,20 @@ def gameEngine(attempts,lettersGuessed, secretWord):
         letter = raw_input('Please guess a letter: ')
         if letter in lettersGuessed:
 
-            guessed = getGuessedWord()
-            checkGuessedLetter(letter, secretWord, guessed, lettersGuessed)
+            guessed = checkGuessedLetter(letter, secretWord, lettersGuessed)
             print 'Oops! You have already guessed that letter: ', guessed
 
         elif letter in secretWord:
             lettersGuessed.append(letter)
 
-            guessed = getGuessedWord()
-            checkGuessedLetter(letter, secretWord, guessed, lettersGuessed)
+            guessed = checkGuessedLetter(letter, secretWord, lettersGuessed)
 
             print 'Good guess: ', guessed
         else:
             attempts -=1
             lettersGuessed.append(letter)
 
-            guessed = getGuessedWord()
-            checkGuessedLetter(letter, secretWord, guessed, lettersGuessed)
+            guessed = checkGuessedLetter(letter, secretWord, lettersGuessed)
 
             print 'Oops! That letter is not in my word: ',  guessed
         print '------------'
