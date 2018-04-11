@@ -1,112 +1,112 @@
 import random
 import string
 
-WORDLIST_FILENAME = "palavras.txt"
+WORDLIST_FILENAME = "words.txt"
 
-def loadWords():
-    """
-    Depending on the size of the word list, this function may
-    take a while to finish.
-    """
-    print "Loading word list from file..."
+class Hangman:
 
-    inFile = open(WORDLIST_FILENAME, 'r', 0)# inFile: file
-    line = inFile.readline()# line: string
-    wordlist = string.split(line)# wordlist: list of strings
+    def __init__(self, file_name='', attempts = 8):
+        self.attempts = attempts
+        self.lettersGuessed = []
+        self.secretWord = ''
+        self.loadWords()
 
-    print " ", len(wordlist), "words loaded."
-    return random.choice(wordlist)
+    def loadWords(self):
+        """
+        Depending on the size of the word list, this function may
+        take a while to finish.
+        """
+        print "Loading word list from file..."
 
-def isWordGuessed(secretWord, lettersGuessed):
-    secretLetters = []
+        inFile = open(WORDLIST_FILENAME, 'r', 0)# inFile: file
+        line = inFile.readline()# line: string
+        wordlist = string.split(line)# wordlist: list of strings
 
-    for letter in secretWord:
-        if letter in lettersGuessed:
-            pass
+        print " ", len(wordlist), "words loaded."
+        self.secretWord = random.choice(wordlist)
+
+    def isWordGuessed(self):
+        self.secretLetters = []
+
+        for letter in self.secretWord:
+            if letter in self.lettersGuessed:
+                pass
+            else:
+                return False
+
+        return True
+
+    def getGuessedWord(self):
+        guessed = ''
+        return guessed
+
+    def getAvailableLetters(self):
+
+        # 'abcdefghijklmnopqrstuvwxyz'
+        available = string.ascii_lowercase
+        return available
+
+    def initialMessage(self):
+
+        print 'Welcome to the game, Hangman!'
+        print 'I am thinking of a word that is', len(self.secretWord), ' letters long.'
+        print '-------------'
+
+    def availableLetters(self,available):
+        for letter in available:
+            if letter in self.lettersGuessed:
+                available = available.replace(letter, '')
+
+        print 'Available letters', available
+
+    def result(self):
+
+        if self.isWordGuessed() == True:
+            print 'Congratulations, you won!'
         else:
-            return False
+            print 'Sorry, you ran out of attempts. The word was', self.secretWord, '.'
 
-    return True
+    def checkGuessedLetter(self, letter):
 
-def getGuessedWord():
-    guessed = ''
-    return guessed
+        guessed = self.getGuessedWord()
+        for letter in self.secretWord:
+            if letter in self.lettersGuessed:
+                guessed += letter
+            else:
+                guessed += '_'
+        print guessed
 
-def getAvailableLetters():
+    def gameEngine(self):
 
-    # 'abcdefghijklmnopqrstuvwxyz'
-    available = string.ascii_lowercase
-    return available
+        while self.isWordGuessed() == False and self.attempts > 0:
+            print 'You have ', self.attempts, 'attempts left.'
 
-def initialMessage(secretWord):
+            available = self.getAvailableLetters()
+            self.availableLetters(available)
 
-    print 'Welcome to the game, Hangman!'
-    print 'I am thinking of a word that is', len(secretWord), ' letters long.'
-    print '-------------'
+            letter = raw_input('Please guess a letter: ')
+            if letter in self.lettersGuessed:
+                print 'Oops! You have already guessed that letter: '
 
-def availableLetters(available, lettersGuessed):
-    for letter in available:
-        if letter in lettersGuessed:
-            available = available.replace(letter, '')
+            elif letter in self.secretWord:
+                self.lettersGuessed.append(letter)
 
-    print 'Available letters', available
 
-def result(secretWord, lettersGuessed):
+                print 'Good guess: '
+            else:
+                self.attempts -=1
+                self.lettersGuessed.append(letter)
+                print 'Oops! That letter is not in my word: '
 
-    if isWordGuessed(secretWord, lettersGuessed) == True:
-        print 'Congratulations, you won!'
-    else:
-        print 'Sorry, you ran out of attempts. The word was', secretWord, '.'
+            self.checkGuessedLetter(letter)
+            print '------------'
 
-def checkGuessedLetter(letter, secretWord, lettersGuessed):
-
-    guessed = getGuessedWord()
-    for letter in secretWord:
-        if letter in lettersGuessed:
-            guessed += letter
         else:
-            guessed += '_'
-    return guessed
-
-def gameEngine(attempts,lettersGuessed, secretWord):
-
-    while isWordGuessed(secretWord, lettersGuessed) == False and attempts > 0:
-        print 'You have ', attempts, 'attempts left.'
-
-        available = getAvailableLetters()
-        availableLetters(available, lettersGuessed)
-
-        letter = raw_input('Please guess a letter: ')
-        if letter in lettersGuessed:
-
-            guessed = checkGuessedLetter(letter, secretWord, lettersGuessed)
-            print 'Oops! You have already guessed that letter: ', guessed
-
-        elif letter in secretWord:
-            lettersGuessed.append(letter)
-
-            guessed = checkGuessedLetter(letter, secretWord, lettersGuessed)
-
-            print 'Good guess: ', guessed
-        else:
-            attempts -=1
-            lettersGuessed.append(letter)
-
-            guessed = checkGuessedLetter(letter, secretWord, lettersGuessed)
-
-            print 'Oops! That letter is not in my word: ',  guessed
-        print '------------'
-
-    else:
-        result(secretWord, lettersGuessed)
+            self.result()
 
 
-def hangman(secretWord):
+if __name__ == "__main__":
 
-    attempts = 8
-    lettersGuessed = []
-    initialMessage(secretWord)
-    gameEngine(attempts,lettersGuessed, secretWord)
-
-secretWord = loadWords()
-hangman(secretWord)
+    hangman = Hangman()
+    hangman.initialMessage()
+    hangman.gameEngine()
